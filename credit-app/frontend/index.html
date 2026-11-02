@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrediShield AI | Credit Assessment Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-950/70 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+        <i class="fa-solid fa-shield-halved text-xl"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight text-white">CrediShield <span class="text-indigo-400">AI</span></h1>
+        <p class="text-xs text-slate-400">Automated Creditworthiness & Default Risk Engine</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-3">
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        <span class="w-2 h-2 mr-2 bg-emerald-400 rounded-full animate-pulse"></span>
+        Model Online (Random Forest)
+      </span>
+      <a href="/docs" target="_blank" class="text-xs text-slate-400 hover:text-white transition px-2 py-1 bg-slate-800 rounded border border-slate-700">
+        <i class="fa-solid fa-code mr-1"></i> Swagger API
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Grid -->
+  <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Input Form (7 cols) -->
+    <section class="lg:col-span-7 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-semibold text-slate-100 flex items-center">
+          <i class="fa-solid fa-user-pen mr-2 text-indigo-400"></i> Applicant Profile
+        </h2>
+        <!-- Preset quick buttons -->
+        <div class="flex space-x-2">
+          <button type="button" onclick="fillProfile('good')" class="text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg transition">
+            <i class="fa-solid fa-check mr-1"></i> Low-Risk Preset
+          </button>
+          <button type="button" onclick="fillProfile('risky')" class="text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg transition">
+            <i class="fa-solid fa-triangle-exclamation mr-1"></i> High-Risk Preset
+          </button>
+        </div>
+      </div>
+
+      <form id="assessmentForm" class="space-y-4">
+        
+        <!-- Row 1: Personal -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Age</label>
+            <input type="number" id="age" value="38" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Education</label>
+            <select id="education" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
+              <option value="Graduate">Graduate</option>
+              <option value="Postgraduate">Postgraduate</option>
+              <option value="High School">High School</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Home Ownership</label>
+            <select id="home_ownership" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
+              <option value="Mortgage">Mortgage</option>
+              <option value="Own">Own</option>
+              <option value="Rent">Rent</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Finances -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Annual Income ($)</label>
+            <input type="number" id="annual_income" value="750000" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Total Existing Debt ($)</label>
+            <input type="number" id="total_debt" value="120000" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Loan Requested ($)</label>
+            <input type="number" id="loan_amount" value="250000" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+        </div>
+
+        <!-- Row 3: Term & Experience -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Loan Term (Months)</label>
+            <select id="loan_term_months" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
+              <option value="12">12 Months</option>
+              <option value="24">24 Months</option>
+              <option value="36" selected>36 Months</option>
+              <option value="48">48 Months</option>
+              <option value="60">60 Months</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Employment Years</label>
+            <input type="number" step="0.5" id="employment_years" value="10" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Credit History (Years)</label>
+            <input type="number" step="0.5" id="credit_history_years" value="12" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+        </div>
+
+        <!-- Row 4: Credit Behavior -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Credit Utilization</label>
+            <input type="number" step="0.01" min="0" max="1" id="credit_utilization" value="0.22" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+            <span class="text-[10px] text-slate-500">e.g. 0.22 = 22%</span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Credit Cards</label>
+            <input type="number" id="num_credit_cards" value="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Late Pay (12m)</label>
+            <input type="number" id="late_payments_12m" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Missed Total</label>
+            <input type="number" id="missed_payments_total" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"/>
+          </div>
+        </div>
+
+        <input type="hidden" id="existing_loans" value="1" />
+
+        <button type="submit" id="submitBtn" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center">
+          <i class="fa-solid fa-calculator mr-2"></i> Evaluate Creditworthiness
+        </button>
+      </form>
+    </section>
+
+    <!-- Right Column: Results & Analytics (5 cols) -->
+    <section class="lg:col-span-5 flex flex-col space-y-6">
+      
+      <!-- Primary Decision Card -->
+      <div id="decisionCard" class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur relative overflow-hidden">
+        <h3 class="text-xs uppercase tracking-wider font-semibold text-slate-400 mb-2">Automated Underwriting Verdict</h3>
+        <div id="verdictBadge" class="text-2xl font-extrabold text-slate-400">
+          Awaiting Evaluation...
+        </div>
+        <p id="riskLevelText" class="text-sm text-slate-400 mt-1">Submit applicant data or pick a preset to see risk assessment.</p>
+
+        <!-- Risk Probability Progress -->
+        <div class="mt-6">
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-slate-400">Default Risk Probability</span>
+            <span id="riskScoreLabel" class="font-bold text-slate-200">--%</span>
+          </div>
+          <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-700">
+            <div id="riskBar" class="h-3 rounded-full bg-indigo-500 transition-all duration-700" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+            <span>0% (Safe)</span>
+            <span>Cutoff: 40%</span>
+            <span>100% (High Default)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Metrics Grid -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
+          <span class="text-xs text-slate-400">Debt-to-Income</span>
+          <div id="dtiValue" class="text-xl font-bold text-slate-200 mt-1">--</div>
+          <span class="text-[10px] text-slate-500">Benchmark: &lt; 0.40</span>
+        </div>
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
+          <span class="text-xs text-slate-400">Loan-to-Income</span>
+          <div id="ltiValue" class="text-xl font-bold text-slate-200 mt-1">--</div>
+          <span class="text-[10px] text-slate-500">Benchmark: &lt; 0.50</span>
+        </div>
+      </div>
+
+      <!-- Risk Factors Card -->
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur flex-1">
+        <h4 class="text-sm font-semibold text-slate-300 mb-3 flex items-center">
+          <i class="fa-solid fa-list-check mr-2 text-indigo-400"></i> Key Underwriting Factors
+        </h4>
+        <ul id="factorsList" class="space-y-2 text-xs text-slate-400">
+          <li>• Model will analyze debt ratios, utilization, and payment histories.</li>
+        </ul>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
